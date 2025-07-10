@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 void main() {
@@ -12,18 +14,34 @@ class MainApp extends StatefulWidget {
 }
 
 class _MainAppState extends State<MainApp> {
-  var randomNumber = 0;
-  var text = "???";
+  var _randomNumber = 0;
+  var _text = "???";
+  var _alert = '';
+  final List<int> _randomNumberList = [];
+
+   void _generateRandom(){
+     setState(() {
+       _randomNumber = Random().nextInt((10)+1);
+       _text = _randomNumber.toString();
+       if(_randomNumberList.contains(_randomNumber)){
+         _alert = 'Número já sorteado! ❌';
+       } else {
+         _alert = '';
+         _randomNumberList.add(_randomNumber);
+       }
+     });
+   }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(
           centerTitle: true,
           toolbarHeight: 100,
           title: const Text(
-            'Numero da sorte 🍀',
+            'Número da sorte 🍀',
             style: TextStyle(
               color: Colors.white,
               fontSize: 30,
@@ -34,9 +52,9 @@ class _MainAppState extends State<MainApp> {
         ),
         body: Center(
           child: Container(
-            padding: EdgeInsets.fromLTRB(30, 50, 30, 100),
+            padding: EdgeInsets.symmetric(horizontal: 30, vertical: 50),
             child: Column(
-              spacing: 20,
+              spacing: 10,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
@@ -48,31 +66,66 @@ class _MainAppState extends State<MainApp> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 50),
+                  child:
+                    Text(
+                      _text,
+                      style: TextStyle(
+                        color: Colors.black87,
+                        fontSize: 120,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                ),
+                    Text(
+                      _alert,
+                      style: TextStyle(
+                        color: Color(0xff8716d5),
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                Container(
+                  margin: const EdgeInsets.symmetric(vertical: 20),
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: _generateRandom,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(0xff8716d5),
+                      foregroundColor: Colors.white,
+                      padding: EdgeInsets.symmetric(horizontal: 60, vertical: 20),
+                      textStyle: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    child: Text('SORTE'),
+                  ),
+                ),
                 Text(
-                  '???',
+                  _randomNumberList.isEmpty ? '' : 'Números já sorteados: \n${_randomNumberList.toString()}',
                   style: TextStyle(
-                    color: Colors.black87,
-                    fontSize: 120,
+                    color: Color(0xff8716d5),
+                    fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
-                ),
-                ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xff8716d5),
-                    foregroundColor: Colors.white,
-                    padding: EdgeInsets.symmetric(horizontal: 60, vertical: 20),
-                    textStyle: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  child: Text('SORTE'),
-                ),
+                )
               ],
             ),
           ),
         ),
+          floatingActionButton: FloatingActionButton(
+            onPressed: (){
+              setState(() {
+                _randomNumberList.clear();
+                _text = '???';
+                _alert = '';
+              });
+            },
+            backgroundColor: Colors.black87,
+            child: const Icon(Icons.refresh, color: Colors.white,),
+          )
       ),
     );
   }
